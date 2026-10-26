@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../inc/mysqrt.hpp"
+#include <mysqrt.hpp>
 
 int main() {
     double input = 25.0;
