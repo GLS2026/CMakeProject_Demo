@@ -1,7 +1,7 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
-#include "mysqrt.hpp"
+#include "ODEFunction.hpp"
 
 double eular(
     const ODEFunction& ode,

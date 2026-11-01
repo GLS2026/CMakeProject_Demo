@@ -1,6 +1,6 @@
 #include <iostream>
 #include <utility.hpp>
-#include <mysqrt.hpp>
+#include <ODEFunction.hpp>
 #include <fstream>
 #include <cmath>
 
@@ -12,7 +12,6 @@ int main()
 {
     std::cout << "Main application started." << std::endl;
 
-    // 建立 ODE1 物件
     ODE1 ode;
 
     std::ofstream csv_file(FILENAME);

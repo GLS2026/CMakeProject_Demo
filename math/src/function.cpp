@@ -1,22 +1,21 @@
-#include <mysqrt.hpp>
+#include <ODEFunction.hpp>
 #include <cmath>
-#include <iostream>
 
-// dy/dt = 1 / (2*y)
+// dy/dt = y - t^2 + 1
 double ODE1::derivative(double t, double y) const
 {
-    return 1.0 / (2.0 * y);
+    return y - t * t + 1;
 }
 
-// y(x) = sqrt(x)
+// y(t) = (t + 1)^2 - 1.5 * exp(t)
 double ODE1::exact_solution(double x) const
 {
-    return std::sqrt(x);
+    return pow(x + 1, 2) - 1.5 * exp(x);
 }
 
 double ODE1::initial_x() const
 {
-    return 0.1;
+    return 0;
 }
 
 double ODE1::initial_y() const

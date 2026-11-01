@@ -26,7 +26,7 @@ install(TARGETS MathLib
     DESTINATION bin
 )
 
-install(FILES ../math/inc/mysqrt.hpp ../math/inc/utility.hpp
+install(FILES ../math/inc/ODEFunction.hpp ../math/inc/utility.hpp
     DESTINATION inc
 )
 
