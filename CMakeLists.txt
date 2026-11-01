@@ -9,3 +9,7 @@ include_directories(math/inc)
 add_subdirectory(math) 
 
 add_subdirectory(main)
+
+enable_testing()
+
+add_subdirectory(tests)

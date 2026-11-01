@@ -11,7 +11,7 @@ if(WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_FILE:MathLib>
             $<TARGET_FILE_DIR:NumericalProject>
-        COMMENT "Copying MySqrtLib DLL to NumericalProject directory"
+        COMMENT "Copying MathLib DLL to NumericalProject directory"
     )
 endif()
 
