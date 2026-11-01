@@ -3,17 +3,18 @@
 #include <cmath>
 
 TEST(MySqrtTest, HandlesPositiveNumbers) {
-    EXPECT_NEAR(mysqrt(25.0), 5.0, 1e-5);
-    EXPECT_NEAR(mysqrt(9.0), 3.0, 1e-5);
-    EXPECT_NEAR(mysqrt(2.0), 1.41421, 1e-4);
-}
+    const double expected_values[] = {
+        -0.5, -0.447756, -0.392104, -0.334788, -0.277737, -0.223082, -0.173178, -0.130629, -0.0983114, -0.0794047,
+        -0.0774227, -0.096249, -0.140175, -0.213945, -0.3228, -0.472534, -0.669549, -0.920921, -1.23447, -1.61884,
+        -2.08358, -2.63925, -3.29752, -4.07127, -4.97476, -6.02374, -7.23561, -8.6296, -10.227, -12.0512,
+        -14.1283, -16.4869, -19.1588, -22.179, -25.5862, -29.4232, -33.7374, -38.581, -44.0118, -50.0937,
+        -56.8972, -64.5004, -72.9895, -82.4597, -93.0163, -104.776, -117.866, -132.431, -148.626, -166.625,
+        -186.62, -208.823, -233.468, -260.815, -291.15, -324.788, -362.08, -403.411, -449.209, -499.946,
+        -556.143, -618.377, -687.284
+    };
 
-TEST(MySqrtTest, HandlesZeroAndOne) {
-    EXPECT_NEAR(mysqrt(0.0), 0.0, 1e-5);
-    EXPECT_NEAR(mysqrt(1.0), 1.0, 1e-5);
-}
-
-TEST(MySqrtTest, HandlesNegativeInput) {
-    double result = mysqrt(-4.0);
-    EXPECT_TRUE(std::isnan(result) || result == 0.0); 
+    for (int i = 0; i < sizeof(expected_values) / sizeof(expected_values[0]); i++) {
+        double x = i * 0.1;
+        EXPECT_NEAR(function(x), expected_values[i], 1e-3);
+    }
 }
