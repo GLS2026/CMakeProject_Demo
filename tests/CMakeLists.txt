@@ -16,33 +16,33 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 # 建立你的測試執行檔
-add_executable(test_mysqrt test_mysqrt.cpp)
+add_executable(test_math test_math.cpp)
 
-target_link_libraries(test_mysqrt
+target_link_libraries(test_math
     PRIVATE
-        MySqrtLib
+        MathLib
         GTest::gtest_main
 )
 
 if(WIN32)
-    add_custom_command(TARGET test_mysqrt POST_BUILD
+    add_custom_command(TARGET test_math POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:MySqrtLib>
-            $<TARGET_FILE_DIR:test_mysqrt>
-        COMMENT "Copying MySqrtLib DLL to test_mysqrt directory"
+            $<TARGET_FILE:MathLib>
+            $<TARGET_FILE_DIR:test_math>
+        COMMENT "Copying MathLib DLL to test_math directory"
     )
 endif()
 
 # 讓 CTest 能夠自動發現並執行這個測試
 include(GoogleTest)
-gtest_discover_tests(test_mysqrt)
+gtest_discover_tests(test_math)
 
-set_target_properties(test_mysqrt PROPERTIES
+set_target_properties(test_math PROPERTIES
     BUILD_RPATH "${CMAKE_BINARY_DIR}/math"
     INSTALL_RPATH "$ORIGIN"
 )
 
 # --- 讓 CTest 的測試執行檔也能透過 cmake --install 產生到 install/bin ---
-install(TARGETS test_mysqrt
+install(TARGETS test_math
     RUNTIME DESTINATION bin
 )

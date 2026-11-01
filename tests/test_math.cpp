@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <mysqrt.hpp>
+#include <ODEFunction.hpp>
 #include <cmath>
 
 TEST(MySqrtTest, HandlesPositiveNumbers) {

@@ -1,5 +1,5 @@
 #include <iostream>
-#include <mysqrt.hpp>
+#include <ODEFunction.hpp>
 
 int main() {
     double input = 6.2;
