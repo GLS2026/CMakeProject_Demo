@@ -15,3 +15,22 @@ Execute makefile to build source code into executables
 cmake --build . # generate execuables in current dir
 cmake --install . # After successful build, generate execuables in "install" folder from the root
 ```
+
+# How to use
+Execute TestApp under `wrapper`
+```
+#Linux
+./main/TestApp
+../install/bin/TestApp
+#windows
+main\TestApp
+..\install\bin\TestApp
+```
+Execute test_mysqrt under `wrapper`
+```
+ctest
+#linux
+../install/bin/test_mysqrt
+#windows
+..\install\bin\test_mysqrt
+```
