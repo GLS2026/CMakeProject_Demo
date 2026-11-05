@@ -12,6 +12,8 @@ void process_csv()
 {
     ODE1 ode;
 
+    ODEInit(ode);
+    
     std::ofstream csv_file(FILENAME);
 
     if (!csv_file.is_open()) {
@@ -25,8 +27,8 @@ void process_csv()
     double h = 0.1;
 
     // Initial value
-    double yEular = ode.exact_solution(t);
-    double yRK4 = ode.exact_solution(t);
+    double yEular = ODE_Eular();
+    double yRK4 = ODE_RK4();
 
     while (t < 2 * PI)
     {
@@ -39,8 +41,8 @@ void process_csv()
         csv_file << yReal << "," << yEular << "," << yRK4 << "\n";
 
         // Numerical integration
-        yEular = eular(ode, t, yEular, h);
-        yRK4 = rk4_step(ode, t, yRK4, h);
+        yEular = eular(t, h);
+        yRK4 = rk4_step(t, h);
 
         t += h;
     }
