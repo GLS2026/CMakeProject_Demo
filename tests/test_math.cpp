@@ -65,3 +65,94 @@ TEST(MathTest, RangeKutta4) {
         EXPECT_NEAR(yRK4[0], expected_values[i], 1e-2);
     }
 }
+
+
+// ==========================================
+// ODE2: Mass-Damper-Spring
+// ==========================================
+
+// Test analytical solution
+TEST(MathTest, ODE2_Real) {
+    MassDamperSpring ode(
+        1.0, 0.5, 4.0, 1.0, 0.0
+    );
+
+    // Initial conditions
+    StateVector initial = ode.exact_solution(0.0);
+
+    ASSERT_EQ(initial.size(), 2);
+    EXPECT_NEAR(initial[0], 1.0, 1e-6);
+    EXPECT_NEAR(initial[1], 0.0, 1e-6);
+
+    // Expected analytical values
+    const double expected_values[][2] = {
+        {0.9803944709, -0.3875688119},
+        {0.5757089567, -1.4893472373},
+        {-0.2230979955, -1.4375916891},
+        {-0.4668947505, 0.8997813813}
+    };
+
+    const double test_times[] = {
+        0.1, 0.5, 1.0, 2.0
+    };
+
+    for (int i = 0; i < 4; i++) {
+        StateVector result =
+            ode.exact_solution(test_times[i]);
+
+        EXPECT_NEAR(result[0], expected_values[i][0], 1e-6);
+        EXPECT_NEAR(result[1], expected_values[i][1], 1e-6);
+    }
+}
+
+
+// Test Euler method
+TEST(MathTest, ODE2_Eular) {
+    MassDamperSpring ode(
+        1.0, 0.5, 4.0, 1.0, 0.0
+    );
+
+    ODEInit(ode);
+
+    double t = 0.0;
+    double h = 0.01;
+
+    StateVector yEular = ODE_Eular();
+
+    for (int i = 0; i < 200; i++) {
+
+        yEular = eular(t, h);
+        t += h;
+
+        StateVector yReal = ode.exact_solution(t);
+
+        EXPECT_NEAR(yEular[0], yReal[0], 1e-2);
+        EXPECT_NEAR(yEular[1], yReal[1], 1e-2);
+    }
+}
+
+
+// Test Runge-Kutta 4th Order method
+TEST(MathTest, ODE2_RK4) {
+    MassDamperSpring ode(
+        1.0, 0.5, 4.0, 1.0, 0.0
+    );
+
+    ODEInit(ode);
+
+    double t = 0.0;
+    double h = 0.01;
+
+    StateVector yRK4 = ODE_RK4();
+
+    for (int i = 0; i < 200; i++) {
+
+        yRK4 = rk4_step(t, h);
+        t += h;
+
+        StateVector yReal = ode.exact_solution(t);
+
+        EXPECT_NEAR(yRK4[0], yReal[0], 1e-2);
+        EXPECT_NEAR(yRK4[1], yReal[1], 1e-2);
+    }
+}

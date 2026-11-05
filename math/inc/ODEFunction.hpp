@@ -30,4 +30,37 @@ public:
 
     double exact_solution(double t) const;
 };
+
+// Second-order ODE
+class ODE2 : public ODEFunction {
+};
+
+// Mass-Damper-Spring System
+class MassDamperSpring : public ODE2 {
+private:
+    double m;   // Mass
+    double c;   // Damping coefficient
+    double k;   // Spring stiffness
+
+    double x0;  // Initial position
+    double v0;  // Initial velocity
+
+public:
+    MassDamperSpring(
+        double mass = 1.0,
+        double damping = 0.5,
+        double stiffness = 4.0,
+        double initial_position = 1.0,
+        double initial_velocity = 0.0
+    );
+
+    StateVector derivative(
+        double t,
+        const StateVector& state
+    ) const override;
+
+    StateVector initial_state() const override;
+
+    StateVector exact_solution(double t) const;
+};
 #endif

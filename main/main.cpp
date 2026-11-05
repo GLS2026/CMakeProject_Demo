@@ -10,7 +10,14 @@ const char* FILENAME = "Numerical_data.csv";
 
 void process_csv()
 {
-    ODE1 ode;
+    // Mass-Damper-Spring parameters
+    MassDamperSpring ode(
+        1.0,    // Mass (kg)
+        0.5,    // Damping coefficient (N·s/m)
+        4.0,    // Spring stiffness (N/m)
+        1.0,    // Initial position (m)
+        0.0     // Initial velocity (m/s)
+    );
 
     ODEInit(ode);
     
@@ -21,7 +28,9 @@ void process_csv()
         return;
     }
 
-    csv_file << "Real,Eular,RK4\n";
+    csv_file << "Time,"
+             << "Position_Eular,Velocity_Eular,"
+             << "Position_RK4,Velocity_RK4\n";
 
     double t = 0;
     double h = 0.1;
@@ -30,15 +39,24 @@ void process_csv()
     StateVector yEular = ODE_Eular();
     StateVector yRK4 = ODE_RK4();
 
-    while (t < 2 * PI)
+    while (t < 10.0)
     {
         // Analytical solution
-        double yReal = ode.exact_solution(t);
+        StateVector yReal = ode.exact_solution(t);
 
-        std::cout << yReal << "," << yEular[0] << "," << yRK4[0] << std::endl;
+        // Display results
+        std::cout << t << ","
+                  << yReal[0] << "," << yReal[1] << ","
+                  << yEular[0] << "," << yEular[1] << ","
+                  << yRK4[0] << "," << yRK4[1]
+                  << std::endl;
 
-        // Save numerical results
-        csv_file << yReal << "," << yEular[0] << "," << yRK4[0] << "\n";
+        // Save results
+        csv_file << t << ","
+                 << yReal[0] << "," << yReal[1] << ","
+                 << yEular[0] << "," << yEular[1] << ","
+                 << yRK4[0] << "," << yRK4[1]
+                 << "\n";
 
         // Numerical integration
         yEular = eular(t, h);
