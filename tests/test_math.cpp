@@ -25,8 +25,8 @@ TEST(MathTest, Real) {
 TEST(MathTest, Eular) {
     ODE1 ode;
     ODEInit(ode);
-    double t = ode.initial_x();
-    double yEular=ode.exact_solution(0);
+    double t = 0;
+    StateVector yEular = ODE_Eular();
     const double expected_values[] = {
         -0.5, -0.447756, -0.392104, -0.334788, -0.277737, -0.223082, -0.173178, -0.130629, -0.0983114, -0.0794047,
         -0.0774227, -0.096249, -0.140175, -0.213945, -0.3228, -0.472534, -0.669549, -0.920921, -1.23447, -1.61884,
@@ -40,15 +40,15 @@ TEST(MathTest, Eular) {
     for (int i = 1; i < (sizeof(expected_values) / sizeof(expected_values[0]))-1; i++) {
         yEular = eular(t, 0.1);
         t += 0.1;
-        EXPECT_NEAR(yEular, expected_values[i], 1e-2);
+        EXPECT_NEAR(yEular[0], expected_values[i], 1e-2);
     }
 }
 
 TEST(MathTest, RangeKutta4) {
     ODE1 ode;
     ODEInit(ode);
-    double t = ode.initial_x();
-    double yRK4=ode.exact_solution(0);
+    double t = 0.0;
+    StateVector yRK4 = ODE_RK4();
     const double expected_values[] = {
         -0.5, -0.447756, -0.392104, -0.334788, -0.277737, -0.223082, -0.173178, -0.130629, -0.0983114, -0.0794047,
         -0.0774227, -0.096249, -0.140175, -0.213945, -0.3228, -0.472534, -0.669549, -0.920921, -1.23447, -1.61884,
@@ -62,6 +62,6 @@ TEST(MathTest, RangeKutta4) {
     for (int i = 1; i < (sizeof(expected_values) / sizeof(expected_values[0]))-1; i++) {
         yRK4 = rk4_step(t, 0.1);
         t += 0.1;
-        EXPECT_NEAR(yRK4, expected_values[i], 1e-2);
+        EXPECT_NEAR(yRK4[0], expected_values[i], 1e-2);
     }
 }

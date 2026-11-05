@@ -3,54 +3,80 @@
 
 static const ODEFunction* ode_ptr = nullptr;
 
-double State[2];
-double State_curr[2];
+static StateVector State_Euler;
+static StateVector State_RK4;
+
+static StateVector add_scaled(
+    const StateVector& state,
+    const StateVector& derivative,
+    double scale)
+{
+    if (state.size() != derivative.size()) {
+        throw std::runtime_error("State dimension mismatch!");
+    }
+
+    StateVector result(state.size());
+
+    for (std::size_t i = 0; i < state.size(); ++i) {
+        result[i] = state[i] + derivative[i] * scale;
+    }
+
+    return result;
+}
 
 // Euler Method
-double eular(
+StateVector eular(
     double t,
     double dt)
 {
-    double k1;
+    if (ode_ptr == nullptr) {
+        throw std::runtime_error("ODE is not initialized!");
+    }
 
-    k1 = ode_ptr->derivative(t, State_curr[0]);
+    StateVector k1 = ode_ptr->derivative(t, State_Euler);
 
-    State_curr[0] += k1 * dt;
-    State[0] = State_curr[0];
-    
-    return State[0];
+    State_Euler = add_scaled(State_Euler, k1, dt);
+
+    return State_Euler;
 }
 
 
 // Runge-Kutta 4th Order Method
-double rk4_step(
+StateVector rk4_step(
     double t,
     double dt)
 {
-    double k1, k2, k3, k4;
+    if (ode_ptr == nullptr) {
+        throw std::runtime_error("ODE is not initialized!");
+    }
 
-    k1 = ode_ptr->derivative(t, State_curr[1]);
+    StateVector k1, k2, k3, k4;
+    StateVector temp;
 
-    k2 = ode_ptr->derivative(
-        t + dt / 2,
-        State_curr[1] + k1 * dt / 2
-    );
+    k1 = ode_ptr->derivative(t, State_RK4);
 
-    k3 = ode_ptr->derivative(
-        t + dt / 2,
-        State_curr[1] + k2 * dt / 2
-    );
+    temp = add_scaled(State_RK4, k1, dt / 2.0);
+    k2 = ode_ptr->derivative(t + dt / 2.0, temp);
 
-    k4 = ode_ptr->derivative(
-        t + dt,
-        State_curr[1] + k3 * dt
-    );
+    temp = add_scaled(State_RK4, k2, dt / 2.0);
+    k3 = ode_ptr->derivative(t + dt / 2.0, temp);
 
-    State_curr[1] += (k1 + 2.0 * k2 + 2.0 * k3 + k4) * dt / 6.0;
+    temp = add_scaled(State_RK4, k3, dt);
+    k4 = ode_ptr->derivative(t + dt, temp);
 
-    State[1] = State_curr[1];
+    if (k1.size() != k2.size() ||
+        k1.size() != k3.size() ||
+        k1.size() != k4.size()) {
+        throw std::runtime_error("RK4 derivative dimension mismatch!");
+    }
 
-    return State[1];
+    for (std::size_t i = 0; i < State_RK4.size(); ++i) {
+        State_RK4[i] +=
+            (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i])
+            * dt / 6.0;
+    }
+
+    return State_RK4;
 }
 
 void ODEInit(const ODEFunction& ode)
@@ -58,29 +84,36 @@ void ODEInit(const ODEFunction& ode)
     ode_ptr = &ode;
 
     // Get initial conditions from ODEFunction
-    double y0 = ode.initial_y();
+    StateVector initial = ode.initial_state();
+
+    if (initial.empty()) {
+        throw std::runtime_error("Initial state is empty!");
+    }
 
     // Initialize Euler state
-    State_curr[0] = y0;
-    State[0] = State_curr[0];
+    State_Euler = initial;
 
     // Initialize RK4 state
-    State_curr[1] = y0;
-    State[1] = State_curr[1];
+    State_RK4 = initial;
 
     std::cout << "--- ODE Numerical Integration ---"
               << std::endl;
 
-    std::cout << "Initial value: " << y0
-              << std::endl;
+        std::cout << "Initial state: ";
+
+    for (double value : initial) {
+        std::cout << value << " ";
+    }
+
+    std::cout << std::endl;
 }
 
-double ODE_Eular()
+StateVector ODE_Eular()
 {
-    return State[0];
+    return State_Euler;
 }
 
-double ODE_RK4()
+StateVector ODE_RK4()
 {
-    return State[1];
+    return State_RK4;
 }

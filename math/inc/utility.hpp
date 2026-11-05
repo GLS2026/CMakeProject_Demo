@@ -5,16 +5,16 @@
 
 void ODEInit(const ODEFunction& ode);
 
-double eular(
+StateVector eular(
     double t,
     double dt
 );
 
-double rk4_step(
+StateVector rk4_step(
     double t,
     double dt
 );
 
-double ODE_Eular();
-double ODE_RK4();
+StateVector ODE_Eular();
+StateVector ODE_RK4();
 #endif
