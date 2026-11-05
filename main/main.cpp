@@ -35,6 +35,7 @@ void process_csv()
     }
 
     csv_file << "Time,"
+             << "Position_Real,Velocity_Real,"
              << "Position_Eular,Velocity_Eular,"
              << "Position_RK4,Velocity_RK4\n";
 
