@@ -17,7 +17,7 @@ cmake --install . # After successful build, generate execuables in "install" fol
 ```
 
 # How to use
-Execute NumericalProject under `wrapper`
+**Build:** Execute NumericalProject under `wrapper`
 ```
 #Linux
 ./main/NumericalProject
@@ -26,7 +26,7 @@ Execute NumericalProject under `wrapper`
 main\NumericalProject
 ..\install\bin\NumericalProject
 ```
-Validate: 
+**Validate:**
 
 1. Execute `ctest` under `wrapper`
 2. Execute `test_math` under the root
@@ -37,6 +37,12 @@ cd install/bin
 cd install\bin
 
 test_math
+```
+
+**Animaion:** execute in python environment after build
+```
+cd tests
+python animation.py
 ```
 
 ## About Mass-Damper-Spring System
