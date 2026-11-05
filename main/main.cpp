@@ -10,13 +10,19 @@ const char* FILENAME = "Numerical_data.csv";
 
 void process_csv()
 {
+    // External force (N)
+    const double force = 10.0;
+
     // Mass-Damper-Spring parameters
     MassDamperSpring ode(
         1.0,    // Mass (kg)
         0.5,    // Damping coefficient (N·s/m)
         4.0,    // Spring stiffness (N/m)
         1.0,    // Initial position (m)
-        0.0     // Initial velocity (m/s)
+        0.0,     // Initial velocity (m/s)
+        [force](double t) {
+        return force;
+    }
     );
 
     ODEInit(ode);
@@ -39,10 +45,10 @@ void process_csv()
     StateVector yEular = ODE_Eular();
     StateVector yRK4 = ODE_RK4();
 
-    while (t < 10.0)
+    while (t < 30.0)
     {
         // Analytical solution
-        StateVector yReal = ode.exact_solution(t);
+        StateVector yReal = ode.exact_solution(t, force);
 
         // Display results
         std::cout << t << ","

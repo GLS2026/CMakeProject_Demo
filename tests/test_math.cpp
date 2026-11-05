@@ -72,87 +72,152 @@ TEST(MathTest, RangeKutta4) {
 // ==========================================
 
 // Test analytical solution
+// Test analytical solution under different constant external forces
 TEST(MathTest, ODE2_Real) {
-    MassDamperSpring ode(
-        1.0, 0.5, 4.0, 1.0, 0.0
-    );
 
-    // Initial conditions
-    StateVector initial = ode.exact_solution(0.0);
-
-    ASSERT_EQ(initial.size(), 2);
-    EXPECT_NEAR(initial[0], 1.0, 1e-6);
-    EXPECT_NEAR(initial[1], 0.0, 1e-6);
-
-    // Expected analytical values
-    const double expected_values[][2] = {
-        {0.9803944709, -0.3875688119},
-        {0.5757089567, -1.4893472373},
-        {-0.2230979955, -1.4375916891},
-        {-0.4668947505, 0.8997813813}
+    const double forces[] = {
+        10.0, 25.0, 35.0
     };
 
     const double test_times[] = {
         0.1, 0.5, 1.0, 2.0
     };
 
-    for (int i = 0; i < 4; i++) {
-        StateVector result =
-            ode.exact_solution(test_times[i]);
+    // Expected values: [Force][Time][Position, Velocity]
+    const double expected_values[3][4][2] = {
 
-        EXPECT_NEAR(result[0], expected_values[i][0], 1e-6);
-        EXPECT_NEAR(result[1], expected_values[i][1], 1e-6);
+        // External force = 10 N
+        {
+            {1.0294082937,  0.5813532179},
+            {1.6364365650,  2.2340208559},
+            {2.8346469932,  2.1563875336},
+            {3.2003421258, -1.3496720720}
+        },
+
+        // External force = 25 N
+        {
+            {1.1029290279,  2.0347362627},
+            {3.2275279774,  7.8190729956},
+            {7.4212644763,  7.5473563675},
+            {8.7011974402, -4.7238522520}
+        },
+
+        // External force = 35 N
+        {
+            {1.1519428506,  3.0036582925},
+            {4.2882555857, 11.5424410887},
+            {10.4790094649, 11.1413355902},
+            {12.3684343166, -6.9733057054}
+        }
+    };
+
+    for (int f = 0; f < 3; f++) {
+
+        double force = forces[f];
+
+        MassDamperSpring ode(
+            1.0, 0.5, 4.0, 1.0, 0.0,
+            [force](double t) {
+                return force;
+            }
+        );
+
+        // Initial conditions
+        StateVector initial = ode.exact_solution(0.0, force);
+
+        ASSERT_EQ(initial.size(), 2);
+        EXPECT_NEAR(initial[0], 1.0, 1e-6);
+        EXPECT_NEAR(initial[1], 0.0, 1e-6);
+
+        // Compare analytical values
+        for (int i = 0; i < 4; i++) {
+
+            StateVector result =
+                ode.exact_solution(test_times[i], force);
+
+            EXPECT_NEAR(
+                result[0],
+                expected_values[f][i][0],
+                1e-6
+            );
+
+            EXPECT_NEAR(
+                result[1],
+                expected_values[f][i][1],
+                1e-6
+            );
+        }
     }
 }
 
 
 // Test Euler method
 TEST(MathTest, ODE2_Eular) {
-    MassDamperSpring ode(
-        1.0, 0.5, 4.0, 1.0, 0.0
-    );
+    const double forces[] = {
+        10.0, 25.0, 35.0
+    };
 
-    ODEInit(ode);
+    for (double force : forces) {
 
-    double t = 0.0;
-    double h = 0.01;
+        MassDamperSpring ode(
+            1.0, 0.5, 4.0, 1.0, 0.0,
+            [force](double t) {
+                return force;
+            }
+        );
 
-    StateVector yEular = ODE_Eular();
+        ODEInit(ode);
 
-    for (int i = 0; i < 200; i++) {
+        double t = 0.0;
+        double h = 0.01;
 
-        yEular = eular(t, h);
-        t += h;
+        StateVector yEular = ODE_Eular();
+        for (int i = 0; i < 200; i++) {
 
-        StateVector yReal = ode.exact_solution(t);
+            yEular = eular(t, h);
+            t += h;
 
-        EXPECT_NEAR(yEular[0], yReal[0], 1e-2);
-        EXPECT_NEAR(yEular[1], yReal[1], 1e-2);
+            StateVector yReal = ode.exact_solution(t, force);
+
+            EXPECT_NEAR(yEular[0], yReal[0], 1e-2);
+            EXPECT_NEAR(yEular[1], yReal[1], 1e-2);
+        }
     }
 }
 
 
 // Test Runge-Kutta 4th Order method
 TEST(MathTest, ODE2_RK4) {
-    MassDamperSpring ode(
-        1.0, 0.5, 4.0, 1.0, 0.0
-    );
+    const double forces[] = {
+        10.0, 25.0, 35.0
+    };
 
-    ODEInit(ode);
-
-    double t = 0.0;
     double h = 0.01;
+    for (double force : forces) {
 
-    StateVector yRK4 = ODE_RK4();
+        MassDamperSpring ode(
+            1.0, 0.5, 4.0, 1.0, 0.0,
+            [force](double t) {
+                return force;
+            }
+        );
 
-    for (int i = 0; i < 200; i++) {
+        ODEInit(ode);
 
-        yRK4 = rk4_step(t, h);
-        t += h;
+        double t = 0.0;
 
-        StateVector yReal = ode.exact_solution(t);
+        // Reset numerical integration initial state
+        StateVector yRK4 = ODE_RK4();
 
-        EXPECT_NEAR(yRK4[0], yReal[0], 1e-2);
-        EXPECT_NEAR(yRK4[1], yReal[1], 1e-2);
+        for (int i = 0; i < 200; i++) {
+
+            yRK4 = rk4_step(t, h);
+            t += h;
+
+            StateVector yReal = ode.exact_solution(t, force);
+
+            EXPECT_NEAR(yRK4[0], yReal[0], 1e-2);
+            EXPECT_NEAR(yRK4[1], yReal[1], 1e-2);
+        }
     }
 }

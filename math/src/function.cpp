@@ -30,13 +30,15 @@ MassDamperSpring::MassDamperSpring(
     double damping,
     double stiffness,
     double initial_position,
-    double initial_velocity
+    double initial_velocity,
+    std::function<double(double)> external_force
 )
     : m(mass),
       c(damping),
       k(stiffness),
       x0(initial_position),
-      v0(initial_velocity)
+      v0(initial_velocity),
+      F(external_force)
 {
     if (m <= 0.0) {
         throw std::invalid_argument("Mass must be positive!");
@@ -57,13 +59,13 @@ StateVector MassDamperSpring::derivative(
     double x = state[0];
     double v = state[1];
 
-    double acceleration = (-c * v - k * x) / m;
+    double acceleration = (F(t) - c * v - k * x) / m;
 
     return {v, acceleration};
 }
 
 // Analytical solution
-StateVector MassDamperSpring::exact_solution(double t) const
+StateVector MassDamperSpring::exact_solution(double t, double constant_force) const
 {
     double omega_n = std::sqrt(k / m);
     double zeta = c / (2.0 * std::sqrt(m * k));
@@ -77,14 +79,17 @@ StateVector MassDamperSpring::exact_solution(double t) const
 
     double omega_d = omega_n * std::sqrt(1.0 - zeta * zeta);
 
+    // Equilibrium position under constant external force
+    double equilibrium_position = constant_force  / k;
+    
     // Coefficients from initial conditions
-    double A = x0;
-    double B = (v0 + zeta * omega_n * x0) / omega_d;
+    double A = x0 - equilibrium_position;
+    double B = (v0 + zeta * omega_n * A) / omega_d;
 
     double decay = std::exp(-zeta * omega_n * t);
 
     // Position
-    double position = decay * (
+    double position = equilibrium_position +decay * (
         A * std::cos(omega_d * t)
         + B * std::sin(omega_d * t)
     );

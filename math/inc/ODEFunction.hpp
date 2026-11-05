@@ -2,6 +2,7 @@
 #define ODE_FUNCTION_H
 
 #include <vector>
+#include <functional>
 
 // State Vector
 using StateVector = std::vector<double>;
@@ -45,13 +46,16 @@ private:
     double x0;  // Initial position
     double v0;  // Initial velocity
 
+    std::function<double(double)> F;
 public:
     MassDamperSpring(
         double mass = 1.0,
         double damping = 0.5,
         double stiffness = 4.0,
         double initial_position = 1.0,
-        double initial_velocity = 0.0
+        double initial_velocity = 0.0,
+        std::function<double(double)> external_force =
+            [](double t) { return 10.0; }
     );
 
     StateVector derivative(
@@ -61,6 +65,6 @@ public:
 
     StateVector initial_state() const override;
 
-    StateVector exact_solution(double t) const;
+    StateVector exact_solution(double t, double constant_force) const;
 };
 #endif
