@@ -8,17 +8,15 @@
 
 const char* FILENAME = "Numerical_data.csv";
 
-int main()
+void process_csv()
 {
-    std::cout << "Main application started." << std::endl;
-
     ODE1 ode;
 
     std::ofstream csv_file(FILENAME);
 
     if (!csv_file.is_open()) {
         std::cerr << "Cannot open CSV file!" << std::endl;
-        return 1;
+        return;
     }
 
     csv_file << "Real,Eular,RK4\n";
@@ -48,6 +46,13 @@ int main()
     }
 
     csv_file.close();
+}
+
+int main()
+{
+    std::cout << "Main application started." << std::endl;
+
+    process_csv();
 
     std::cout << "Main application finished." << std::endl;
 

@@ -17,20 +17,20 @@ cmake --install . # After successful build, generate execuables in "install" fol
 ```
 
 # How to use
-Execute TestApp under `wrapper`
+Execute NumericalProject under `wrapper`
 ```
 #Linux
-./main/TestApp
-../install/bin/TestApp
+./main/NumericalProject
+../install/bin/NumericalProject
 #windows
-main\TestApp
-..\install\bin\TestApp
+main\NumericalProject
+..\install\bin\NumericalProject
 ```
-Execute test_mysqrt under `wrapper`
+Execute test_math under `wrapper`
 ```
 ctest
 #linux
-../install/bin/test_mysqrt
+../install/bin/test_math
 #windows
-..\install\bin\test_mysqrt
+..\install\bin\test_math
 ```
