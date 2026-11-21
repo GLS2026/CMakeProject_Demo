@@ -49,6 +49,8 @@ python animation.py
 
 The Mass-Damper-Spring system is a classical second-order mechanical system consisting of a mass, a damper, and a spring. Its dynamic behavior is described by Newton's Second Law.
 
+<img width="1000" height="600" alt="mds_animation" src="https://github.com/user-attachments/assets/0da6b6ca-896b-4546-9435-aff170bff09c" />
+
 #### 1. Mathematical Model
 
 Consider a mass connected to a spring and a damper, subject to an external force $F(t)$.

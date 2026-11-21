@@ -1,8 +1,10 @@
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
 from matplotlib.animation import FuncAnimation
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+import os
+from matplotlib.animation import PillowWriter
 
 FILE_NAME = "../wrapper/Numerical_data.csv"
 
@@ -324,4 +326,11 @@ ani = FuncAnimation(
     repeat=False
 )
 
-plt.show()
+base_dir = os.path.dirname(os.path.abspath(__file__))
+output_dir = os.path.normpath(os.path.join(base_dir, "..", "assets"))
+os.makedirs(output_dir, exist_ok=True)
+output_path = os.path.join(output_dir, "mds_animation.gif")
+
+fps = max(1, int(round(1.0 / TIME_STEP))) if TIME_STEP > 0 else 25
+ani.save(output_path, writer=PillowWriter(fps=fps), dpi=100)
+print(f"Saved GIF to local path: {output_path}")
